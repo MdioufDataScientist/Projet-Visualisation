@@ -16,7 +16,7 @@ load_figure_template("cyborg")
 app=dash.Dash(__name__,external_stylesheets=[dbc.themes.CYBORG])
 app.layout=dbc.Container([
     dbc.Row([
-        dbc.Col(html.H1("Mohamed DIOUF DASHBOARD",className='text-center font-weight-bold shadow'))
+        dbc.Col(html.H1("Covid Dashboard",className='text-center font-weight-bold shadow'))
     ]),
     dbc.Row([       
             dbc.Col([
