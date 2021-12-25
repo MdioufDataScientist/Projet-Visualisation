@@ -14,12 +14,19 @@ from datetime import date
 path1="/home/mdiouf/Bureau/Projet-Visualisation/Data_covid.csv"
 data=pd.read_csv(path1)
 #print(data.head(5))
-
+total=data['cases'].sum()
+total=str(total)
+morts=data['deaths'].sum()
+morts=str(morts)
 load_figure_template("cyborg")
 app=dash.Dash(__name__,external_stylesheets=[dbc.themes.CYBORG])
 app.layout=dbc.Container([
     dbc.Row([
-        dbc.Col(html.H1("Covid Dashboard",className='text-center font-weight-bold shadow'))
+        dbc.Col(html.Div([
+                html.H1("COVID DASHBOARD",style={'fontWeight':'bold','textAlign':'center'})
+            ]
+                
+            ))
     ]),
     dbc.Row([       
             dbc.Col([
@@ -32,25 +39,38 @@ app.layout=dbc.Container([
             end_date_placeholder_text="Fin",
             calendar_orientation='vertical',
             )
-            ], width={'size':4}
+            ], width={'size':6}
             ),
             dbc.Col([
             dcc.Dropdown(id='d_drp',
             options=[{'label':x,'value':x} for x in data['countriesAndTerritories'].unique()],
             placeholder="selectionner le Pays"
             )
-            ], width={'size':4}),
-            dbc.Col([
-                dbc.Button(
-            id="submit_button",
-            n_clicks=0,
-            children="Submit",
-            color="primary",
-            #block=True,
-             ),
-            ], width={'size':4})
+            ], width={'size':6}),
+            
         ]
         ),
+        dbc.Row([
+        dbc.Col([
+            html.Br(),
+            html.Div([
+                html.H1("Total Cas : "+total,style={'color': 'green','fontWeight':'bold','textAlign':'left'})
+            ]
+                
+            )
+            
+        ], width={'size':5}
+        ),
+        dbc.Col([
+            html.Br(),
+            html.Div([
+                html.H1("Total Morts : "+morts,style={'color': 'red','fontWeight':'bold','textAlign':'right'})
+            ]
+                
+            )
+        ], width={'size':6}
+        )       
+    ]),
         dbc.Row([
         dbc.Col([
             html.Br(),
