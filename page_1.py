@@ -111,26 +111,17 @@ app.layout=dbc.Container([
         dbc.Col([
             html.Br(),
             dcc.Graph(id="fig_7",figure={})         
-        ], width={'size':6}
-        ),
-        dbc.Col([
-            html.Br(),
-            dcc.Graph(id="fig_8",figure={})
-        ], width={'size':6}
-        )       
+        ], width={'size':12}
+        ),      
     ]),
     dbc.Row([
-        dbc.Col([
+       dbc.Col([
             html.Br(),
-            dcc.Graph(id="fig_9",figure={})         
-        ], width={'size':6}
-        ),
-        dbc.Col([
-            html.Br(),
-            dcc.Graph(id="fig_10",figure={})
-        ], width={'size':6}
-        )       
-    ]),
+            dcc.Graph(id="fig_8",figure={})
+        ], width={'size':12}
+        ) 
+    ])
+          
 ]) ########
 data['dateRep']=pd.to_datetime(data['dateRep'])
 def creer_datafram(debut,fin,pays):
@@ -146,7 +137,9 @@ def creer_datafram(debut,fin,pays):
 [Output('fig_1', 'figure'),
 Output('fig_2', 'figure'),
 Output('fig_3', 'figure'),
-Output('fig_4', 'figure')
+Output('fig_4', 'figure'),
+Output('fig_5', 'figure'),
+Output('fig_6', 'figure')
 ],
 [Input('plage_de_date', 'start_date'),
 Input('plage_de_date', 'end_date'),
@@ -162,21 +155,28 @@ def update(debut,fin,pays):
                 cov_2 = df.groupby('month')['deaths'].sum().reset_index()
                 fig_2= px.bar(cov_2,x='month',y='deaths',title=f'nombre total de morts par mois : {pays}',color='month')
                 #fig_2=px.scatter(cov_2,x='month',y='deaths',size='deaths',color="month",title=f"nombre total de morts par mois : {pays}")
-                #fig_3=px.line(df,x='day',y='cases',markers=True,title=f"tendance des nouveaux cas : {pays}")
-                fig_3=px.scatter(df,x='month',y='deaths',size='deaths',color="month",title=f"nombre total de morts par mois : {pays}")
+                fig_3=px.scatter(df,x='day',y='cases',title=f"tendance des nouveaux cas par jour: {pays}",size='cases',color="cases")
+                #fig_3=px.scatter(df,x='month',y='deaths',size='deaths',color="month",title=f"nombre total de morts par mois : {pays}")
                 #manipulations pour obtenir la somme cumulé
-                k=pd.DataFrame(df.groupby('month')['cases'].sum())
-                k=k['cases'].cumsum().reset_index()
+                cum_1=pd.DataFrame(df.groupby('month')['cases'].sum())
+                cum_1=cum_1['cases'].cumsum().reset_index()
                 #
-                fig_4=px.line(k,x='month',y='cases',markers=True,title=f"cumul des cas par mois : {pays}")
+                fig_4=px.scatter(df,x='day',y='deaths',title=f"tendance des Morts par jour : {pays}",size='deaths',color="deaths")
+        
+                cum_2=pd.DataFrame(df.groupby('month')['deaths'].sum())
+                cum_2=cum_2['deaths'].cumsum().reset_index()
+                fig_5=px.line(cum_2,x='month',y='deaths',markers=True,title=f"cumul des Morts par mois : {pays}")
+                fig_6=px.line(cum_1,x='month',y='cases',markers=True,title=f"cumul des cas par mois : {pays}")
 
                 #fig1=px.pie(df,values='cases',names='dateRep',color_discrete_sequence=px.colors.sequential.RdBu,title=f"Nombre de cas par Jour : {pays}")
-                return fig_1,fig_2,fig_3,fig_4
+                return fig_1,fig_2,fig_3,fig_4,fig_5,fig_6
     else:
         fig_1={}  
         fig_2={}
         fig_3={}
         fig_4={}
-        return fig_1,fig_2,fig_3,fig_4
+        fig_5={}
+        fig_6={}
+        return fig_1,fig_2,fig_3,fig_6,fig_4,fig_5
 
 app.run_server(debug=True)
