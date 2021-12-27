@@ -131,7 +131,7 @@ app.layout=dbc.Container([
         ], width={'size':6}
         )       
     ]),
-])
+]) ########
 data['dateRep']=pd.to_datetime(data['dateRep'])
 def creer_datafram(debut,fin,pays):
     df=data[data['countriesAndTerritories']==pays]
@@ -143,7 +143,11 @@ def creer_datafram(debut,fin,pays):
     return df_filtrer
 
 @app.callback(
-Output('fig_1', 'figure'),
+[Output('fig_1', 'figure'),
+Output('fig_2', 'figure'),
+Output('fig_3', 'figure'),
+Output('fig_4', 'figure')
+],
 [Input('plage_de_date', 'start_date'),
 Input('plage_de_date', 'end_date'),
 Input('d_drp','value')
@@ -153,10 +157,26 @@ def update(debut,fin,pays):
         if debut:
             if fin:
                 df=creer_datafram(debut,fin,pays)
-                fig1=px.pie(df,values='cases',names='dateRep',color_discrete_sequence=px.colors.sequential.RdBu,title=f"Nombre de cas pa Jour : {pays}")
-                return fig1
+                cov = df.groupby('month')['cases'].sum().reset_index()
+                fig_1 = px.bar(cov,x='month',y='cases',title=f'nombre total de cas par mois : {pays}',color='month')
+                cov_2 = df.groupby('month')['deaths'].sum().reset_index()
+                fig_2= px.bar(cov_2,x='month',y='deaths',title=f'nombre total de morts par mois : {pays}',color='month')
+                #fig_2=px.scatter(cov_2,x='month',y='deaths',size='deaths',color="month",title=f"nombre total de morts par mois : {pays}")
+                #fig_3=px.line(df,x='day',y='cases',markers=True,title=f"tendance des nouveaux cas : {pays}")
+                fig_3=px.scatter(df,x='month',y='deaths',size='deaths',color="month",title=f"nombre total de morts par mois : {pays}")
+                #manipulations pour obtenir la somme cumulé
+                k=pd.DataFrame(df.groupby('month')['cases'].sum())
+                k=k['cases'].cumsum().reset_index()
+                #
+                fig_4=px.line(k,x='month',y='cases',markers=True,title=f"cumul des cas par mois : {pays}")
+
+                #fig1=px.pie(df,values='cases',names='dateRep',color_discrete_sequence=px.colors.sequential.RdBu,title=f"Nombre de cas par Jour : {pays}")
+                return fig_1,fig_2,fig_3,fig_4
     else:
-        fig1={}  
-        return fig1
+        fig_1={}  
+        fig_2={}
+        fig_3={}
+        fig_4={}
+        return fig_1,fig_2,fig_3,fig_4
 
 app.run_server(debug=True)
