@@ -182,7 +182,7 @@ def update(debut,fin,pays):
                 #manipulations pour obtenir la somme cumulé
                 cum_1=pd.DataFrame(df.groupby('month')['cases'].sum())
                 cum_1=cum_1['cases'].cumsum().reset_index()
-                #
+              
                 fig_4=px.scatter(df,x='day',y='deaths',title=f"tendance des Morts par jour : {pays}",size='deaths',color="deaths")
         
                 cum_2=pd.DataFrame(df.groupby('month')['deaths'].sum())
