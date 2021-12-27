@@ -9,7 +9,9 @@ import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
 import pandas as pd
 from datetime import date
-import dash_table
+from dash import dash_table
+#from dash_table.Format import Group` with 
+from dash.dash_table.Format import Group
 
 #path="https://github.com/MdioufDataScientist/Projet-Visualisation/blob/main/COVID-19-geographic-disbtribution-worldwide%20-%20COVID-19-geographic-disbtributi.csv"
 path1="/home/mdiouf/Bureau/Projet-Visualisation/Data_covid.csv"
@@ -63,7 +65,7 @@ app.layout=dbc.Container([
             ]
                 
             )
-            
+          
         ], width={'size':5}
         ),
         dbc.Col([
@@ -122,9 +124,18 @@ app.layout=dbc.Container([
                 ],
                 data=dfTable.to_dict('records'),
                 page_size=10,
-                style_cell={'textAlign': 'left','background-color':'gray','color':'black'}
+                style_cell={'textAlign': 'center'},
+                style_header={
+        'backgroundColor': 'white',
+        'color': 'black',
+        'fontWeight': 'bold'
+    },
+    style_data={
+        'backgroundColor': 'rgb(50, 50, 50)',
+        'color': 'white'
+    },
             )        
-        ], width={'size':12}
+        ], width={'size':8,'offset':2}
         )      
     ]),
     dbc.Row([
@@ -137,9 +148,19 @@ app.layout=dbc.Container([
                 ],
                 data=dfMort.to_dict('records'),
                 page_size=10,
-                style_cell={'textAlign': 'left','background-color':'gray','color':'black'}
+                #style_cell={'textAlign': 'left','background-color':'gray','color':'black'}
+                style_cell={'textAlign': 'center'},
+                style_header={
+        'backgroundColor': 'white',
+        'color': 'black',
+        'fontWeight': 'bold'
+    },
+    style_data={
+        'backgroundColor': 'rgb(50, 50, 50)',
+        'color': 'white'
+    },
             )        
-        ], width={'size':12}
+        ], width={'size':8,'offset':2}
         )  
     ])
           
