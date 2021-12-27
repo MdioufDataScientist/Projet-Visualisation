@@ -9,10 +9,15 @@ import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
 import pandas as pd
 from datetime import date
+import dash_table
 
 #path="https://github.com/MdioufDataScientist/Projet-Visualisation/blob/main/COVID-19-geographic-disbtribution-worldwide%20-%20COVID-19-geographic-disbtributi.csv"
 path1="/home/mdiouf/Bureau/Projet-Visualisation/Data_covid.csv"
-data=pd.read_csv(path1)
+data=pd.read_csv("Data_covid.csv")
+dfTable=data.groupby(['countriesAndTerritories'])['cases'].sum().reset_index()
+dfTable=dfTable.sort_values(by=['cases'],ascending=False)
+dfMort=data.groupby(['countriesAndTerritories'])['deaths'].sum().reset_index()
+dfMort=dfMort.sort_values(by=['deaths'],ascending=False)
 #print(data.head(5))
 total=data['cases'].sum()
 total=str(total)
@@ -110,19 +115,35 @@ app.layout=dbc.Container([
     dbc.Row([
         dbc.Col([
             html.Br(),
-            dcc.Graph(id="fig_7",figure={})         
+             dash_table.DataTable(
+                id='datatable',
+                columns=[
+                    {"name": i, "id": i, "deletable": True, "selectable": True} for i in dfTable.columns
+                ],
+                data=dfTable.to_dict('records'),
+                page_size=10,
+                style_cell={'textAlign': 'left','background-color':'gray','color':'black'}
+            )        
         ], width={'size':12}
-        ),      
+        )      
     ]),
     dbc.Row([
-       dbc.Col([
+         dbc.Col([
             html.Br(),
-            dcc.Graph(id="fig_8",figure={})
+             dash_table.DataTable(
+                id='datatable2',
+                columns=[
+                    {"name": i, "id": i, "deletable": True, "selectable": True} for i in dfMort.columns
+                ],
+                data=dfMort.to_dict('records'),
+                page_size=10,
+                style_cell={'textAlign': 'left','background-color':'gray','color':'black'}
+            )        
         ], width={'size':12}
-        ) 
+        )  
     ])
           
-]) ########
+])
 data['dateRep']=pd.to_datetime(data['dateRep'])
 def creer_datafram(debut,fin,pays):
     df=data[data['countriesAndTerritories']==pays]
@@ -139,7 +160,8 @@ Output('fig_2', 'figure'),
 Output('fig_3', 'figure'),
 Output('fig_4', 'figure'),
 Output('fig_5', 'figure'),
-Output('fig_6', 'figure')
+Output('fig_6', 'figure'),
+
 ],
 [Input('plage_de_date', 'start_date'),
 Input('plage_de_date', 'end_date'),
@@ -178,5 +200,6 @@ def update(debut,fin,pays):
         fig_5={}
         fig_6={}
         return fig_1,fig_2,fig_3,fig_6,fig_4,fig_5
+
 
 app.run_server(debug=True)
